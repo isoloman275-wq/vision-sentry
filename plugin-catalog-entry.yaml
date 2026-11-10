@@ -1,0 +1,5 @@
+# Catalog entry — add as plugin-catalog/vision-sentry.yaml in NousResearch/hermes-agent
+name: vision-sentry
+repo: https://github.com/isoloman275-wq/vision-sentry
+# sha: <full 40-char commit SHA pinned at submission>
+version: 1.0.0

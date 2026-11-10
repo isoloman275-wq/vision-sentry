@@ -1,0 +1,76 @@
+name: vision-sentry
+version: 1.0.0
+description: >-
+  Agent vision for any RTSP camera. Watches RTSP feeds with ffmpeg scene
+  detection, classifies every event with a vision model (local or cloud,
+  OpenAI-compatible), stores events in a local SQLite database, and injects
+  fresh alerts into the agent's next turn so Hermes tells YOU what it saw —
+  couriers, family members, strangers, vehicles, packages — with a snapshot,
+  not just "motion detected". Queryable event memory, live snapshot
+  classification, arm/disarm, and demo mode included.
+provides_tools:
+  - sentry_status
+  - sentry_events
+  - sentry_snap
+  - sentry_describe
+  - sentry_simulate
+  - sentry_set_mode
+provides_hooks:
+  - pre_llm_call
+config_schema:
+  rtsp_url:
+    type: secret
+    env: SENTRY_RTSP_URL
+    label: RTSP camera URL
+    description: "rtsp://user:pass@host:554/stream — stored in .env, never in config"
+  cam_name:
+    type: str
+    default: front-door
+    label: Camera name
+  scene_threshold:
+    type: float
+    default: 0.08
+    label: Scene-change threshold
+    description: "ffmpeg scene score 0-1; lower = more sensitive"
+  cooldown_secs:
+    type: int
+    default: 30
+    label: Event cooldown (seconds)
+  enabled:
+    type: bool
+    default: true
+    label: Watcher enabled at load
+  notify_webhook_url:
+    type: str
+    default: ""
+    label: Notification webhook (POST JSON per event, optional)
+  telegram_bot_token:
+    type: secret
+    env: SENTRY_TELEGRAM_BOT_TOKEN
+    label: Telegram bot token (optional)
+    description: "Send event snapshots to a chat via Bot API"
+  telegram_chat_id:
+    type: str
+    default: ""
+    label: Telegram chat ID (optional)
+  vision_base_url:
+    type: str
+    default: ""
+    label: Vision endpoint base URL
+    description: "OpenAI-compatible chat/completions base (e.g. http://192.168.1.15:8085/v1, http://localhost:11434/v1). Empty = disabled (store events unclassified)"
+  vision_model:
+    type: str
+    default: ""
+    label: Vision model name
+  vision_api_key:
+    type: secret
+    env: SENTRY_VISION_API_KEY
+    label: Vision endpoint API key (optional)
+  classify_timeout:
+    type: int
+    default: 60
+    label: Classification timeout (seconds)
+python_dependencies:
+  - "requests>=2.28,<3"
+license: MIT
+tags: [vision, camera, rtsp, security, home, surveillance, alerts]
